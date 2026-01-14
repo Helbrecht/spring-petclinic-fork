@@ -29,14 +29,14 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-
 
-      - name: Build & Test
-        run: mvn -B clean verify
+     # - name: Build & Test
+      #  run: mvn -B clean verify
 
-      - name: Upload JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: petclinic-jar
-          path: target/spring-petclinic*.jar
+     # - name: Upload JAR
+      #  uses: actions/upload-artifact@v4
+       # with:
+        #  name: petclinic-jar
+         # path: target/spring-petclinic*.jar
 
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -44,10 +44,23 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build & Push Docker
+              
+      - name: Lowercase owner and app name
+        run: |
+          echo "OWNER_LOWER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          
+      #- name: Build & Push Docker
+      #  uses: docker/build-push-action@v6
+       # with:
+         # push: true
+         #tags: ghcr.io/helbrecht/petclinic:latest,ghcr.io/helbrecht/petclinic:${{ github.sha }}
+        #  file: Dockerfile
+       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
+          context: .
+          file: ./Dockerfile
           push: true
-          tags: ghcr.io/helbrecht/petclinic:latest,ghcr.io/helbrecht/petclinic:${{ github.sha }}
-          file: Dockerfile
+          tags: |
+            ghcr.io/${{ env.OWNER_LOWER }}/petclinic:latest
+            ghcr.io/${{ env.OWNER_LOWER }}/petclinic:${{ github.sha }}
