@@ -1,0 +1,29 @@
+name: CD - Deploy to Local K8s
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Image tag'
+        required: true
+        default: 'latest'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: Helbrecht/petclinic-infra
+          path: infra
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Deploy
+        env:
+          KUBE_CONFIG: ${{ secrets.ghcr-secret }} 
+        run: |
+          echo "$KUBE_CONFIG" > kubeconfig.yaml
+          export KUBECONFIG=kubeconfig.yaml
+          helm upgrade --install petclinic infra/helm/petclinic-chart --namespace petclinic --create-namespace --set image.tag=${{ github.event.inputs.tag }}
