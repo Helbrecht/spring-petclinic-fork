@@ -1,29 +1,32 @@
-name: CD - Deploy to Local K8s
+name: CD - Generate Deployment Artifacts
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  
     inputs:
       tag:
-        description: 'Image tag'
+        description: 'Image tag to deploy (e.g. latest or SHA)'
         required: true
         default: 'latest'
 
 jobs:
-  deploy:
+  prepare:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout infra repo
+        uses: actions/checkout@v4
         with:
           repository: Helbrecht/petclinic-infra
           path: infra
 
-      - name: Install Helm
-        uses: azure/setup-helm@v4
-
-      - name: Deploy
-        env:
-          KUBE_CONFIG: ${{ secrets.ghcr-secret }} 
+      - name: Generate Helm command
         run: |
-          echo "$KUBE_CONFIG" > kubeconfig.yaml
-          export KUBECONFIG=kubeconfig.yaml
-          helm upgrade --install petclinic infra/helm/petclinic-chart --namespace petclinic --create-namespace --set image.tag=${{ github.event.inputs.tag }}
+          echo "helm upgrade --install petclinic infra/helm/petclinic-chart \
+            --namespace petclinic --create-namespace \
+            --set image.repository=ghcr.io/helbrecht/petclinic \
+            --set image.tag=${{ github.event.inputs.tag }}" > deploy-command.txt
+
+      - name: Upload deployment command
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-command
+          path: deploy-command.txt
