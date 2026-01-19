@@ -43,9 +43,32 @@ helm upgrade --install petclinic infra/helm/petclinic-chart \
   --namespace petclinic \
   --create-namespace \
   --set image.repository=ghcr.io/Helbrecht/petclinic \
-  --set image.tag=<твой_commit_sha_или_latest>
+  --set image.tag=<твой_commit_sha_или_latest> \
 
+**Доступ к приложению**
+Bashkubectl port-forward svc/petclinic 8080:8080 -n petclinic
+Открой: http://localhost:8080
 
+**Логи приложения в Kibana**
+http://localhost:5601 → Discover → Data View fluentbit-* → фильтр:
+textkubernetes.namespace_name : petclinic
+
+**Мониторинг в Grafana**
+http://localhost:3000 → Dashboards → Kubernetes / Compute Resources / Namespace (Pods) → namespace = petclinic
+
+**Релизный цикл и версионирование**
+Разработка: feature/* → develop (автоматический CI, Docker с SHA)
+Релиз: release/* → main (ручной тег vX.Y.Z, Docker с тегом vX.Y.Z)
+Версионирование Docker-образов:
+При push в develop/main — тег = commit SHA
+При релизе — тег = vX.Y.Z (ручной)
+
+**Правила внесения изменений**
+Создай feature-ветку: git flow feature start имя-фичи
+Делай коммиты с понятными сообщениями
+Делай PR в develop
+После ревью мержи
+Для релиза: git flow release start v1.0.0 → мерж в main
 
 
 
