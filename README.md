@@ -1,3 +1,85 @@
+# Spring PetClinic
+
+[![Build and Push Docker](https://github.com/Helbrecht/petclinic/actions/workflows/ci.yml/badge.svg)](https://github.com/Helbrecht/petclinic/actions/workflows/ci.yml)
+
+Это форк классического демонстрационного приложения [Spring PetClinic](https://github.com/spring-projects/spring-petclinic) — веб-приложение на Spring Boot для ветеринарной клиники.
+
+## Структура репозитория
+
+- `src/` — исходный код приложения (Spring Boot + JPA + Thymeleaf + H2)
+- `.github/workflows/` — GitHub Actions пайплайны
+  - `ci.yml` — сборка, тесты, сборка Docker-образа и пуш в GHCR
+  - `cd.yml` — генерация команды деплоя в K8s (ручной запуск)
+- `Dockerfile` — сборка Docker-образа
+- `pom.xml` — Maven-конфигурация
+
+## CI/CD
+
+### CI (автоматически при push/PR)
+
+- Сборка Maven (`mvn clean package -DskipTests`)
+- Сборка Docker-образа
+- Пуш в GHCR: `ghcr.io/Helbrecht/petclinic:<commit-sha>`
+
+### CD (ручной запуск)
+
+1. Перейди в Actions → CD - Generate Deployment Command
+2. Нажми Run workflow → укажи tag (или оставь latest)
+3. Скачай artifact `deploy-command.txt`
+4. Выполни команду из файла (см. ниже)
+
+## Развёртывание приложения локально
+
+### Требования
+
+- kind запущен (см. [petclinic-infra](https://github.com/Helbrecht/petclinic-infra))
+- Helm установлен
+- kubectl настроен на kind-кластер
+
+### Команда деплоя (из CD-пайплайна)
+
+```bash
+helm upgrade --install petclinic infra/helm/petclinic-chart \
+  --namespace petclinic \
+  --create-namespace \
+  --set image.repository=ghcr.io/Helbrecht/petclinic \
+  --set image.tag=<твой_commit_sha_или_latest>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Spring PetClinic Sample Application [![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/maven-build.yml)[![Build Status](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/spring-projects/spring-petclinic/actions/workflows/gradle-build.yml)
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/spring-projects/spring-petclinic) [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=7517918)
