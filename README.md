@@ -13,6 +13,21 @@
 - `Dockerfile` — сборка Docker-образа
 - `pom.xml` — Maven-конфигурация
 
+**Секреты: 
+Создай токен в GitHub**
+GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+Generate new token (classic)scopes:
+read:packages (обязательно)
+write:packages (если будешь пушить из CI)
+Сгенерируй токен → скопируй его.
+
+**Добавь токен в GitHub Secrets репозитория (petclinic)**
+Это для CI/CD (чтобы GitHub Actions мог пушить образы).
+В репозитории petclinic → Settings → Secrets and variables → Actions → New repository secret
+Name: .......
+Value: вставь скопированный токен
+Add secret
+
 ## CI/CD
 
 ### CI (автоматически при push/PR)
