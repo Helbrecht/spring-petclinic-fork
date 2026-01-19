@@ -35,16 +35,6 @@
 - kind запущен (см. [petclinic-infra](https://github.com/Helbrecht/petclinic-infra))
 - Helm установлен
 - kubectl настроен на kind-кластер
-
-### Команда деплоя (из CD-пайплайна)
-
-```bash
-helm upgrade --install petclinic infra/helm/petclinic-chart \
-  --namespace petclinic \
-  --create-namespace \
-  --set image.repository=ghcr.io/Helbrecht/petclinic \
-  --set image.tag=<твой_commit_sha_или_latest> \
-
 **Доступ к приложению**
 Bashkubectl port-forward svc/petclinic 8080:8080 -n petclinic
 Открой: http://localhost:8080
@@ -70,39 +60,18 @@ http://localhost:3000 → Dashboards → Kubernetes / Compute Resources / Namesp
 После ревью мержи
 Для релиза: git flow release start v1.0.0 → мерж в main
 
+### Команда деплоя (из CD-пайплайна)
+
+```bash
+helm upgrade --install petclinic infra/helm/petclinic-chart \
+  --namespace petclinic \
+  --create-namespace \
+  --set image.repository=ghcr.io/Helbrecht/petclinic \
+  --set image.tag=<твой_commit_sha_или_latest> 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
